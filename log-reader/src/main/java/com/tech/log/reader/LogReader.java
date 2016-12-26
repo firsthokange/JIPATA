@@ -17,19 +17,30 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class LogReader {
 
+    private XSSFWorkbook workBook;
+
+    public void setWorkBook(XSSFWorkbook myWorkBook) {
+        this.workBook = myWorkBook;
+    }
+
     public String read(int rowNum, int colNum) {
-        String result = null;
-        try {
-            XSSFWorkbook myWorkBook = new XSSFWorkbook(
-                    new FileInputStream("src/resources/Book1.xlsx"));
-            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
-            XSSFRow row = mySheet.getRow(rowNum - 1);
-            XSSFCell cell = row.getCell(colNum - 1);
-            result = cell.getStringCellValue();
-        } catch (Exception ioe) {
-            ioe.printStackTrace(System.err);
+        XSSFSheet mySheet = workBook.getSheetAt(0);
+        XSSFRow row = mySheet.getRow(rowNum);
+        XSSFCell cell = row.getCell(colNum);
+        return cell.getStringCellValue();
+    }
+
+    public void write(int rowNum, int colNum, String fc) {
+        XSSFSheet mySheet = workBook.getSheetAt(0);
+        XSSFRow row = mySheet.getRow(rowNum );
+        if(row == null){
+            row = mySheet.createRow(rowNum);
         }
-        return result;
+        XSSFCell cell = row.getCell(colNum);
+        if(cell == null){
+            cell = row.createCell(colNum);
+        }
+        cell.setCellValue(fc);
     }
 
 }
