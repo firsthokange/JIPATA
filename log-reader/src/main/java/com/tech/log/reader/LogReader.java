@@ -5,7 +5,6 @@
  */
 package com.tech.log.reader;
 
-import java.io.FileInputStream;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -31,6 +30,19 @@ public class LogReader {
     }
 
     public void write(int rowNum, int colNum, String fc) {
+        XSSFSheet mySheet = workBook.getSheetAt(0);
+        XSSFRow row = mySheet.getRow(rowNum );
+        if(row == null){
+            row = mySheet.createRow(rowNum);
+        }
+        XSSFCell cell = row.getCell(colNum);
+        if(cell == null){
+            cell = row.createCell(colNum);
+        }
+        cell.setCellValue(fc);
+    }
+    
+    public void write(int rowNum, int colNum, long fc) {
         XSSFSheet mySheet = workBook.getSheetAt(0);
         XSSFRow row = mySheet.getRow(rowNum );
         if(row == null){
