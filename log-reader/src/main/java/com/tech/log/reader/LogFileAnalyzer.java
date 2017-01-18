@@ -55,9 +55,9 @@ public class LogFileAnalyzer {
 	StringBuilder insertSql;
 
 	public LogFileAnalyzer() throws Exception {
-		Class.forName("oracle.jdbc.driver.OracleDriver");
-		conn = DriverManager.getConnection(
-				"jdbc:oracle:thin:@localhost:1521:XE", "FC", "password");
+//		Class.forName("oracle.jdbc.driver.OracleDriver");
+//		conn = DriverManager.getConnection(
+//				"jdbc:oracle:thin:@localhost:1521:XE", "FC", "password");
 
 		insertSql = new StringBuilder();
 		insertSql.append(" INSERT INTO CMES_APP_LOG ( ");
@@ -163,8 +163,8 @@ public class LogFileAnalyzer {
 					logReader
 							.write(excelLine, 1, temp.dateStr + " " + temp.timeStr);
 					logReader.write(excelLine, 2, rm.dateStr + " " + rm.timeStr);
-					logReader.write(excelLine, 3, "-1");
-					logReader.write(excelLine, 4, "-1");
+					logReader.write(excelLine, 3, -1);
+					logReader.write(excelLine, 4, -1);
 					excelLine++;
 
 					createBookThreads.remove(rm);
