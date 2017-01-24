@@ -73,18 +73,27 @@ public class LogFileAnalyzer {
 
 	private ReadModel lineSpliter(String line) {
 		String lines[] = line.split(" ");
+//		System.out.println(lines.length);
+		if(lines.length == 0){
+			return null;
+		}
 		ReadModel rm = new ReadModel();
 		try {
 			rm.dateFormat.parse(lines[0]);
 		} catch (ParseException e) {
+//			e.printStackTrace(System.err);
 			return null;
 		}
+		try{
 		rm.dateStr = lines[0];
 		rm.timeStr = lines[1];
 		rm.fileThreadNo = lines[2];
 		rm.logMessage = line.replace(lines[0], "").replace(lines[1], "")
 				.replace(lines[2], "").trim();
 		rm.fullLine = line;
+		}catch(Exception ex){
+			ex.printStackTrace(System.err);
+		}
 		return rm;
 	}
 
@@ -104,6 +113,10 @@ public class LogFileAnalyzer {
 		String line;
 		while ((line = br.readLine()) != null) {
 			lineNumber++;
+//			if(lineNumber < 351459){
+//				continue;
+//			}
+//			System.out.println(lineNumber);
 			// System.out.println(String.format("%.2f",
 			// (lineNumber / 568996f) * 100f));
 			ReadModel rm = lineSpliter(line);
@@ -115,25 +128,32 @@ public class LogFileAnalyzer {
 					System.out.println("duplicateThread@Line:" + lineNumber);
 					ReadModel temp = createBookThreads.get(0);
 					System.out.println(temp.dateStr+" "+temp.timeStr);
-					throw new RuntimeException("No handle fail defined");
+					throw new Exception("No handle fail defined");
 				}
 				createBookThreads.add(rm);
 			} else if (line
 					.contains("end controller http://cmes.crownproperty.or.th/cpbesb/general/create_book.htm")) {
 
-				ReadModel temp = createBookThreads.get(createBookThreads
-						.indexOf(rm));
+				if(createBookThreads
+						.indexOf(rm) == -1){
+					
+				}else{
+					ReadModel temp = createBookThreads.get(createBookThreads
+							.indexOf(rm));
 
-				logReader.write(excelLine, 0, temp.threadIdRound + "");
-				logReader
-						.write(excelLine, 1, temp.dateStr + " " + temp.timeStr);
-				logReader.write(excelLine, 2, rm.dateStr + " " + rm.timeStr);
-				logReader.write(excelLine, 3,
-						(rm.getLogDateTime().getTime() - temp.getLogDateTime()
-								.getTime()) / 1000);
+					logReader.write(excelLine, 0, temp.threadIdRound + "");
+					logReader
+							.write(excelLine, 1, temp.dateStr + " " + temp.timeStr);
+					logReader.write(excelLine, 2, rm.dateStr + " " + rm.timeStr);
+					logReader.write(excelLine, 3,
+							(rm.getLogDateTime().getTime() - temp.getLogDateTime()
+									.getTime()) / 1000);
+					
+					createBookThreads.remove(rm);
+				}
+				
 				excelLine++;
 
-				createBookThreads.remove(rm);
 			}
 			if (!createBookThreads.contains(rm)) {
 				// do nothing
